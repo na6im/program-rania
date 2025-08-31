@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { getCurrentWeekInfo } from "./utils/dateUtils";
 import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/Card";
 import { Button } from "./components/ui/Button";
 import { Input } from "./components/ui/Input";
@@ -28,9 +29,16 @@ import { WorkoutRow } from "./components/WorkoutRow";
 
 /** --- App --- */
 export default function App(){
-  const [week, setWeek] = useState<number>(1);
-  const [day, setDay] = useState<string>("Lundi");
+  // Automatically select week and date
+  const { week: initialWeek, date: todayDate } = getCurrentWeekInfo();
+  const [week, setWeek] = useState<number>(initialWeek);
+  // Optionally, select the current day of week
   const days = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+  const todayIndex = todayDate.getDay(); // 0=Sunday, 1=Monday, ...
+  // Map JS day to French days (Monday=1)
+  const initialDay = days[(todayIndex === 0 ? 6 : todayIndex - 1)];
+  const [day, setDay] = useState<string>(initialDay);
+  // ...existing code...
   const [state, setState] = useState<ProgressState>(() => loadState());
   useEffect(()=>saveState(state), [state]);
 
@@ -69,9 +77,20 @@ export default function App(){
     setState(prev=>({...prev, metrics:{...prev.metrics, [`w${week}`]:{...prev.metrics[`w${week}`], ...partial}}}));
   }
 
+  // Calculate how long she's been in the challenge
+  const challengeStart = new Date('2025-09-01');
+  challengeStart.setHours(0,0,0,0);
+  const daysInChallenge = Math.max(0, Math.floor((todayDate.getTime() - challengeStart.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+  const formattedDate = todayDate.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-slate-100 p-6">
       <div className="max-w-6xl mx-auto space-y-6">
+        {/* Top info bar */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-2 bg-white/60 rounded-xl border mb-2">
+          <div className="text-lg font-semibold text-slate-700">{formattedDate}</div>
+          <div className="text-md text-slate-600">Jour {daysInChallenge} du challenge</div>
+        </div>
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <h1 className="text-2xl font-bold">Carnet 8 semaines – Alimentation & Sport</h1>
           <div className="flex items-center gap-2">
