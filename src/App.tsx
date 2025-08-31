@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Checkbox } from "@/components/ui/Checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
-import { Textarea } from "@/components/ui/Textarea";
-import { Badge } from "@/components/ui/Badge";
+import { useEffect, useMemo, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/Card";
+import { Button } from "./components/ui/Button";
+import { Input } from "./components/ui/Input";
+import { Checkbox } from "./components/ui/Checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/Tabs";
+import { Textarea } from "./components/ui/Textarea";
+import { Badge } from "./components/ui/Badge";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 /** --- Mapping semaines -> menus/sport --- */
@@ -143,9 +143,9 @@ export default function App(){
 
   const totals = todayMeals.reduce((a,m)=>({ kcal:a.kcal+m.kcal, P:a.P+m.P, G:a.G+m.G, L:a.L+m.L}), {kcal:0,P:0,G:0,L:0});
 
-  const chartData = Array.from({length:8}).map((_,i)=>{
-    const w = i+1; const m = state.metrics[`w${w}`]; return { name:`S${w}`, poids: m?.weight ?? null };
-  });
+  // const chartData = Array.from({length:8}).map((_,i)=>{
+  //   const w = i+1; const m = state.metrics[`w${w}`]; return { name:`S${w}`, poids: m?.weight ?? null };
+  // });
 
   function toggleMeal(i:number){
     setState(prev=>{ const b = prev.done[doneKey] ?? base; const meals=[...b.meals]; meals[i]=!meals[i]; return {...prev, done:{...prev.done, [doneKey]:{...b, meals}}}; });
@@ -207,7 +207,7 @@ export default function App(){
               </div>
               <div className="mt-4">
                 <SectionTitle title="Notes du jour" />
-                <Textarea value={doneEntry.notes} onChange={(e)=>setNotes(e.target.value)} placeholder="Sommeil, énergie, douleurs, faim…" />
+                <Textarea value={doneEntry.notes} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>)=>setNotes(e.target.value)} placeholder="Sommeil, énergie, douleurs, faim…" />
               </div>
             </CardContent>
           </Card>
@@ -226,15 +226,15 @@ export default function App(){
                 <div className="grid sm:grid-cols-3 gap-3">
                   <div className="space-y-1">
                     <label className="text-sm opacity-80">Poids (kg)</label>
-                    <Input type="number" step="0.1" value={state.metrics[`w${week}`]?.weight ?? ""} onChange={(e)=>saveWeekMetrics({weight: Number(e.target.value)})} />
+                    <Input type="number" step="0.1" value={state.metrics[`w${week}`]?.weight ?? ""} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>saveWeekMetrics({weight: Number(e.target.value)})} />
                   </div>
                   <div className="space-y-1">
                     <label className="text-sm opacity-80">Tour de taille (cm)</label>
-                    <Input type="number" step="0.5" value={state.metrics[`w${week}`]?.waist ?? ""} onChange={(e)=>saveWeekMetrics({waist: Number(e.target.value)})} />
+                    <Input type="number" step="0.5" value={state.metrics[`w${week}`]?.waist ?? ""} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>saveWeekMetrics({waist: Number(e.target.value)})} />
                   </div>
                   <div className="space-y-1">
                     <label className="text-sm opacity-80">Tour de hanches (cm)</label>
-                    <Input type="number" step="0.5" value={state.metrics[`w${week}`]?.hips ?? ""} onChange={(e)=>saveWeekMetrics({hips: Number(e.target.value)})} />
+                    <Input type="number" step="0.5" value={state.metrics[`w${week}`]?.hips ?? ""} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>saveWeekMetrics({hips: Number(e.target.value)})} />
                   </div>
                 </div>
               </TabsContent>
